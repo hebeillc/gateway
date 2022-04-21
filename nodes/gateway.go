@@ -519,7 +519,7 @@ func (g *gateway) handleBridgeMessages() error {
 					log.Infof("handleBridgeMessages msgTx: from Blockchain, hash %v, event TxAnnouncedByBlockchainNodeIgnoreSeen, peerID: %v, delivered %v, %v, diffFromBDNTime %v", hash, txAnnouncement.PeerID, delivered, expected, diffFromBDNTime)
 					// if we delivered to node and got it from the node we were very late.
 				}
-				log.Infof("handleBridgeMessages publishPendingTx %v, %v", hash, bxTx)
+				log.Infof("handleBridgeMessages publishPendingTx %v, %v", hash)
 				g.publishPendingTx(hash, bxTx, true)
 			}
 
