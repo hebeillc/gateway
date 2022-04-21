@@ -487,16 +487,21 @@ func (g *gateway) handleBridgeMessages() error {
 			if !g.isSyncWithRelay() {
 				continue
 			}
+			log.Info("handleBridgeMessages txAnnouncement:%v", txAnnouncement)
+
 			// if announcement message has many transaction we are probably after reconnect with the node - we should ignore it in order not to over load the client feed
 			if len(txAnnouncement.Hashes) > bxgateway.MaxAnnouncementFromNode {
+				log.Info("handleBridgeMessages skipped tx announcement of size %v", len(txAnnouncement.Hashes))
 				log.Debugf("skipped tx announcement of size %v", len(txAnnouncement.Hashes))
 				continue
 			}
+			log.Info("handleBridgeMessages continue")
 			requests := make([]types.SHA256Hash, 0)
 			for _, hash := range txAnnouncement.Hashes {
 				bxTx, exists := g.TxStore.Get(hash)
 				if !exists && !g.TxStore.Known(hash) {
 					log.Tracef("msgTx: from Blockchain, hash %v, event TxAnnouncedByBlockchainNode, peerID: %v", hash, txAnnouncement.PeerID)
+					log.Info("handleBridgeMessages msgTx: from Blockchain, hash %v, event TxAnnouncedByBlockchainNode, peerID: %v", hash, txAnnouncement.PeerID)
 					requests = append(requests, hash)
 				} else {
 					var diffFromBDNTime int64
@@ -511,8 +516,10 @@ func (g *gateway) handleBridgeMessages() error {
 					}
 
 					log.Tracef("msgTx: from Blockchain, hash %v, event TxAnnouncedByBlockchainNodeIgnoreSeen, peerID: %v, delivered %v, %v, diffFromBDNTime %v", hash, txAnnouncement.PeerID, delivered, expected, diffFromBDNTime)
+					log.Info("handleBridgeMessages msgTx: from Blockchain, hash %v, event TxAnnouncedByBlockchainNodeIgnoreSeen, peerID: %v, delivered %v, %v, diffFromBDNTime %v", hash, txAnnouncement.PeerID, delivered, expected, diffFromBDNTime)
 					// if we delivered to node and got it from the node we were very late.
 				}
+				log.Info("handleBridgeMessages publishPendingTx %v, %v", hash, bxTx)
 				g.publishPendingTx(hash, bxTx, true)
 			}
 
