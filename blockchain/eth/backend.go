@@ -84,6 +84,7 @@ func (h *Handler) handleFeeds(wsCtx context.Context, nodeWS blockchain.WSProvide
 			activeFeeds = true
 			txHash, err := types.NewSHA256Hash(newPendingTx[:])
 			nodeWS.Log().Tracef("received new pending tx %v", txHash)
+			nodeWS.Log().Infof("monitorlog received new pending tx %v", txHash)
 			hashes := types.SHA256HashList{txHash}
 			err = h.bridge.AnnounceTransactionHashes(bxgateway.WSConnectionID, hashes)
 			if err != nil {
@@ -166,6 +167,7 @@ func (h *Handler) RunPeer(ep *Peer, handler func(*Peer) error) error {
 	}
 	if ws, ok := h.wsManager.Provider(&ep.endpoint); ok {
 		wsCtx, _ := context.WithCancel(ep.ctx)
+		log.Infof("monitorlog runEthSub &v", ep.p)
 		go h.runEthSub(wsCtx, ws)
 	}
 	if err := h.peers.register(ep); err != nil {

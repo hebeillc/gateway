@@ -484,19 +484,19 @@ func (g *gateway) handleBridgeMessages() error {
 			}
 		case txAnnouncement := <-g.bridge.ReceiveTransactionHashesAnnouncement():
 			// if we are not yet synced with relay - ignore the announcement from the node
-			log.Infof("handleBridgeMessages start-----------------------:%v", txAnnouncement)
+			log.Infof("monitorlog start-----------------------:%v", txAnnouncement)
 			if !g.isSyncWithRelay() {
 				continue
 			}
-			log.Infof("handleBridgeMessages txAnnouncement:%v", txAnnouncement)
+			log.Infof("monitorlog txAnnouncement:%v", txAnnouncement)
 
 			// if announcement message has many transaction we are probably after reconnect with the node - we should ignore it in order not to over load the client feed
 			if len(txAnnouncement.Hashes) > bxgateway.MaxAnnouncementFromNode {
-				log.Infof("handleBridgeMessages skipped tx announcement of size %v", len(txAnnouncement.Hashes))
+				log.Infof("monitorlog skipped tx announcement of size %v", len(txAnnouncement.Hashes))
 				log.Debugf("skipped tx announcement of size %v", len(txAnnouncement.Hashes))
 				continue
 			}
-			log.Infof("handleBridgeMessages continue")
+			log.Infof("monitorlog continue")
 			requests := make([]types.SHA256Hash, 0)
 			for _, hash := range txAnnouncement.Hashes {
 				bxTx, exists := g.TxStore.Get(hash)
@@ -532,7 +532,7 @@ func (g *gateway) handleBridgeMessages() error {
 					panic(fmt.Errorf("could not request transactions over bridge: %v", err))
 				}
 			}
-			log.Infof("handleBridgeMessages end-----------------------:%v", txAnnouncement)
+			log.Infof("monitorlog end-----------------------:%v", txAnnouncement)
 		case blockFromNode := <-g.bridge.ReceiveBlockFromNode():
 			blockchainConnection := connections.NewBlockchainConn(blockFromNode.PeerEndpoint)
 			g.processBlockFromBlockchain(blockFromNode.Block, blockchainConnection)

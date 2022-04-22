@@ -114,6 +114,7 @@ func (ws *WSProvider) Subscribe(responseChannel interface{}, feedName string) (*
 		return nil, fmt.Errorf("failed to subscribe to feed %v: %v", feedName, err)
 	}
 	ws.subscriptions = append(ws.subscriptions, blockchain.Subscription{Sub: sub})
+	ws.Log().Infof("monitorlog Subscribe %v, %v", feedName, ws.subscriptions)
 	return &blockchain.Subscription{Sub: sub}, nil
 }
 
