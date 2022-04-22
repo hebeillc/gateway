@@ -484,6 +484,7 @@ func (g *gateway) handleBridgeMessages() error {
 			}
 		case txAnnouncement := <-g.bridge.ReceiveTransactionHashesAnnouncement():
 			// if we are not yet synced with relay - ignore the announcement from the node
+			log.Infof("handleBridgeMessages start-----------------------:%v", txAnnouncement)
 			if !g.isSyncWithRelay() {
 				continue
 			}
@@ -531,6 +532,7 @@ func (g *gateway) handleBridgeMessages() error {
 					panic(fmt.Errorf("could not request transactions over bridge: %v", err))
 				}
 			}
+			log.Infof("handleBridgeMessages end-----------------------:%v", txAnnouncement)
 		case blockFromNode := <-g.bridge.ReceiveBlockFromNode():
 			blockchainConnection := connections.NewBlockchainConn(blockFromNode.PeerEndpoint)
 			g.processBlockFromBlockchain(blockFromNode.Block, blockchainConnection)
